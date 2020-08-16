@@ -26,7 +26,7 @@ function VideoUploadPage(props) {
   const [privateFlag, setPrivateFlag] = useState(0);
   const [category, setCategory] = useState("Film & Animation");
   const [videoInfo, setVideoInfo] = useState({
-    filepath: "",
+    filePath: "",
     duration: "",
     thumbnailPath: "",
   });
@@ -53,7 +53,7 @@ function VideoUploadPage(props) {
       title: form.videoTitle,
       description: form.description,
       privacy: privateFlag,
-      filePth: videoInfo.filepath,
+      filePath: videoInfo.filePath,
       category: category,
       duration: videoInfo.duration,
       thumbnail: videoInfo.thumbnailPath,
@@ -80,23 +80,21 @@ function VideoUploadPage(props) {
     axios.post("/api/video/uploadfiles", formData, config).then((res) => {
       if (res.data.success) {
         console.log(res.data);
+        let { filePath } = res.data;
 
         let variable = {
-          filePath: res.data.filePath,
+          filePath,
           fileName: res.data.fileName,
         };
-        setVideoInfo({
-          ...videoInfo,
-          filepath: res.data.filePath,
-        });
 
-        //gerenate thumbnail with this filepath !
+        //gerenate thumbnail with this filePath !
 
         axios.post("/api/video/thumbnail", variable).then((res) => {
           if (res.data.success) {
             console.log(res.data);
             setVideoInfo({
               ...videoInfo,
+              filePath,
               duration: res.data.fileDuration,
               thumbnailPath: res.data.thumbsFilePath,
             });
